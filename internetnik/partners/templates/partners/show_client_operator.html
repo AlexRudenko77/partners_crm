@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>{{ title }}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+ <style>
+  
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #f2f2f2;
+    margin: 0;
+    padding: 0;
+  }
+
+  #id_search_field {
+    border: none;
+  }
+  
+@media (max-width:   1080px) {
+  .container {
+    width:   100%; /* Полная ширина на мобильных устройствах */
+    margin-left:   0;
+  }
+}
+
+@media (max-width:  576px) {
+    .fs-3-mobile {
+      font-size:  1.75rem; /* Это значение соответствует fs-3 в Bootstrap  5 */
+    }
+  }
+   
+</style>
+
+  
+  
+</head>
+<body>
+      {% load static %}
+    {% if user.is_authenticated %}
+   <nav class="navbar navbar-expand-lg bg-body-tertiary">
+  <div class="container">
+    <a class="navbar-brand" href="{% url 'home' %}">УЛичный кабинет оператора</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Переключатель навигации">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link" href="#">Проверка ТхВ</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">База знаний</a>
+        </li>
+      </ul>
+      <form class="d-flex" method="POST" action="/search_results/">
+          {% csrf_token %}
+        <div class="form-control me-2" > {{ searchform.search_field }} </div>
+        <input class="form-control me-2" name="{{ searchform.search_term.html_name }}">
+        <button class="btn btn-outline-success" type="submit">Найти</button>
+      </form>
+    </div>
+  </div>
+</nav>
+{% endif %}  
+<div class="container" style="margin-top: 1rem">   
+   <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="/">Главная</a></li>
+          <li class="breadcrumb-item"><a href="{% url 'all_clients' %}">Все клиенты</a></li>
+          <li class="breadcrumb-item active" aria-current="page">Клиент №{{ client.id }}</li>
+        </ol>
+     </nav>
+     
+     <div class="col-12 col-md-8">
+     <div class="table-responsive">
+        <table class="table table-striped">
+            <tbody>
+                <tr>
+                    <td>Дата создания</td>
+                    <td>{{ client.time_create|date:"d.m.Y H:i" }}</td>
+                </tr>
+                <tr>
+                    <td>Когда позвонить</td>
+                    <td>{{ client.callback_date|date:"d.m.Y" }}</td>
+                </tr>
+                <tr>
+                    <td>Номер телефона</td>
+                    <td>{{ client.client_phone_number }}</td>
+                </tr>
+                <tr>
+                    <td>ФИО клиента</td>
+                    <td>{{ client.client_name }}</td>
+                </tr>
+                <tr>
+                    <td>Адрес</td>
+                    <td>{{ client.address }}</td>
+                </tr>
+                <tr>
+                    <td>Источник заявки</td>
+                    <td>{{ client.who_is_partner }}</td>
+                </tr>
+                 <tr>
+                    <td>Статус</td>
+                    <td>{{ client.get_call_result_display }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <a href="{% url 'edit_client' client.id %}">Взять в работу</a>
+    </div>
+</div>
+
+<div class="container" style="margin-top:   1rem">   
+  <div class="row">
+    <div class="col-12 col-md-8">
+      <!-- Форма добавления комментария -->
+        <form id="commentForm" method="post" class="mb-4">
+          {% csrf_token %}
+          <div class="mb-3">
+              <textarea class="form-control fs-3-mobile" id="text" name="{{ comment_form.text.html_name }}" placeholder="Комментарий: "  rows="2"></textarea>
+          </div>
+          <button type="submit" class="btn btn-outline-success" style="float: right; margin-right:  10px;">Отправить</button>
+        </form>
+    </div>
+  </div>
+</div>     
+         
+
+<div class="container" style="margin-top:   1rem">   
+  <div class="row">
+     <div class="col-12 col-md-8">
+        <!-- Список комментариев -->
+        {% for comment in comments %}
+          <div class="card mb-3">
+            <div class="card-body">
+              <h5 class="card-title">{{ comment.user.first_name }} <small class="text-muted"> | {{ comment.created_at }}</small> </h5>
+              <p class="card-text">{{ comment.text }}</p>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+
+
+
+     
+    
+
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
+
+
+
+
+</body>
+</html>

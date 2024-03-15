@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Все клиенты</title>
+  
+</head>
+<body>
+      {% load static %}
+    {% if user.is_authenticated %}
+   <div style="position: absolute; top: 0; right: 0;">
+       <a href="{% url 'users:logout' %}">Выйти из учетной записи</a>
+   </div>
+{% endif %}  
+   
+    <h1>{{ title }}</h1>
+    
+  <table >
+  <tr>
+    <th>Дата создания</th>
+    <th>Адрес</th>
+    <th>Номер телефона</th>
+    <th>Результат звонка</th>
+    <th>Когда перезвонить</th>
+    <th>Источник</th>
+    <th>Подробности</th>
+  </tr>
+  {% for client in clients %}
+    <tr>
+      <td>{{ client.time_create|date:"d.m.Y" }}</td>
+      <td>{{ client.address }}</td>
+      <td>{{ client.client_phone_number }}</td>
+      <td>{{ client.get_call_result_display }}</td>
+      <td>{{ client.callback_date|date:"d.m.Y"}}</td>
+      <td>{{ client.who_is_partner.partner_name}}</td>
+      <td>Смотреть</td>
+    </tr>
+  {% endfor %}
+</table>
+</body>
+</html>
