@@ -9,6 +9,7 @@ from django.utils import timezone
 from partners.models import Clients, Partners, CommentClient, Contracts, Operators, CommentContract, OperatorSchedule
 
 from partners.forms import AddClientFormOperator, SearchForm, CommentClientForm, EditClientForm, AddClientForm
+from django.core.serializers import serialize
 
 
 # Create your views here.
@@ -47,7 +48,7 @@ def index_operator(request):
 
     searchform = SearchForm()
     data = {
-        'title': 'Личный кабинет оператора',
+        'title': 'Личный кабинет',
         'calls_in_work_count': calls_in_work_count,
         'check_connect_count': check_connect_count,
         'coordinate_count': coordinate_count,
@@ -104,10 +105,15 @@ def add_client(request):
 @login_required
 def add_client_operator(request):
     searchform = SearchForm()
+    partners = Partners.objects.all()
+    partners_json = serialize('json', partners)
     if request.method == 'POST':
         form = AddClientFormOperator(request.POST)
         if form.is_valid():
             client = form.save(commit=False)
+            client.callback_date = timezone.now().date()
+            operator = get_current_operator()  # определяем оператора, работающего сегодня
+            client.who_is_operator = operator
             client.save()
 
             # Создание нового комментария
@@ -120,7 +126,9 @@ def add_client_operator(request):
     data = {
         'title': 'Создание нового клиента',
         'form': form,
-        'searchform': searchform
+        'searchform': searchform,
+        'partners_json': partners_json,
+        'partners': partners
     }
 
     return render(request, 'partners/add_client_operator.html', data)

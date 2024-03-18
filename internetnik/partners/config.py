@@ -1,4 +1,6 @@
 from dataclasses import dataclass
+from typing import List
+
 from environs import Env
 
 
@@ -16,9 +18,22 @@ class SecretKeyConfig:
 
 
 @dataclass
+class StaticUrlConfig:
+    static_url: str  # месторасположение статических файлов
+
+
+
+@dataclass
+class HostsConfig:
+    hosts: List[str]    # Список доменов
+
+
+@dataclass
 class Config:
     django_key: SecretKeyConfig
     db: DatabaseConfig
+    static: StaticUrlConfig
+    hosts: HostsConfig
 
 
 def load_config(path: str | None = None) -> Config:
@@ -33,5 +48,11 @@ def load_config(path: str | None = None) -> Config:
             db_host=env('DB_HOST'),
             db_user=env('DB_USER'),
             db_password=env('DB_PASSWORD')
+        ),
+        static=StaticUrlConfig(
+            static_url=env('STATIC_URL')
+        ),
+        hosts=HostsConfig(
+            hosts=env.list('ALLOWED_HOSTS', subcast=str)
         )
     )

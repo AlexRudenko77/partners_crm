@@ -52,3 +52,15 @@ body {
     padding: 10px;
   }
 
+@media (max-width:   1080px) {
+  .container, .my-form {
+    width:   100%; /* Полная ширина на мобильных устройствах */
+    margin-left:   0;
+  }
+}
+
+@media (max-width:  576px) {
+    .fs-3-mobile {
+      font-size:  1.75rem; /* Увеличение размера текста на мобильных устройствах, чтобы не было масштабирования
+    }
+  }

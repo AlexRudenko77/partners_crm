@@ -28,7 +28,7 @@ SECRET_KEY = config.django_key
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['bonus-internet.ru', 'www.bonus-internet.ru', '127.0.0.1', 'localhost']
+ALLOWED_HOSTS = config.hosts.hosts
 
 
 # Application definition
@@ -128,8 +128,8 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
-STATIC_URL = 'partners/static/'
-
+STATIC_URL = config.static.static_url
+STATIC_ROOT = config.static.static_url
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field

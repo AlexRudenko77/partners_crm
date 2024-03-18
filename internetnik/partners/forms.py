@@ -11,7 +11,8 @@ class SearchForm(forms.Form):
         ('phone_number', 'Поиск по телефону'),
         ('address', 'Поиск по адресу'),
     )
-    search_field = forms.ChoiceField(choices=SEARCH_FIELDS, label='Параметры поиска')
+    search_field = forms.ChoiceField(choices=SEARCH_FIELDS, label='Параметры поиска',
+                                     widget=forms.Select(attrs={'class': 'form-select'}))
     search_term = forms.CharField(label='Введите значение')
 
 
@@ -23,25 +24,26 @@ class AddClientForm(forms.ModelForm):
         fields = ['client_phone_number', 'client_name', 'address', 'comment']
 
 
-
 class AddClientFormOperator(forms.ModelForm):
     comment = forms.CharField(widget=forms.Textarea(attrs={'cols': 30, 'rows': 3}), label='Комментарий')
-    who_is_partner = forms.ModelChoiceField(queryset=Partners.objects.all().order_by('partner_name'),
-                                            label='Источник заявки')
+
+    # who_is_partner = forms.ModelChoiceField(queryset=Partners.objects.all().order_by('partner_name'),
+    #                                         label='Источник заявки')
+
 
     class Meta:
         model = Clients
         fields = ['client_phone_number', 'client_name', 'address', 'who_is_partner', 'comment']
-        
-        
+
+
 class CommentClientForm(forms.ModelForm):
     text = forms.CharField(widget=forms.Textarea(attrs={'rows': 3}), required=True, label='')
 
     class Meta:
         model = CommentClient
         fields = ['text']
-        
-        
+
+
 class EditClientForm(forms.ModelForm):
     class Meta:
         model = Clients
