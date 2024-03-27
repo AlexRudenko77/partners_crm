@@ -3,10 +3,12 @@ import requests
 
 from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
+from django.urls import reverse
 
 from .models import Clients, Contracts, Partners
 from django.core.exceptions import ObjectDoesNotExist
 from internetnik.settings import bot_config
+import phonenumbers
 
 
 @receiver(post_save, sender=Clients)
@@ -26,13 +28,13 @@ def update_is_contract_created(sender, instance, **kwargs):
     if instance.call_result == 'AG' and not instance.is_contract_created:
         instance.is_contract_created = True
         instance.save()
-        
+
 
 @receiver(pre_save, sender=Clients)
 def set_callback_date_to_null(sender, instance, **kwargs):
     if instance.is_contract_created or instance.call_result == 'NO':
         instance.callback_date = None
-        
+
 
 @receiver(post_save, sender=User)
 def create_partners_profile(sender, instance, created, **kwargs):
@@ -61,8 +63,31 @@ def notify_operator_new_client_added(sender, instance, created, **kwargs):
     if created:
         if instance.who_is_operator and instance.who_is_operator.telegram_id:
             TOKEN = bot_config.tg_bot.token
-            chat_id = instance.who_is_operator.telegram_id # Используем telegram_id оператора
-            message = "Новый клиент. Возьмите в работу"
-            url = f"https://api.telegram.org/bot{TOKEN}/sendMessage?chat_id={chat_id}&text={message}"
-            response = requests.get(url)
+            chat_id = instance.who_is_operator.telegram_id  # Используем telegram_id оператора
+            client_edit_url = f"https://bonus-internet.ru{reverse('edit_client', kwargs={'client_id': instance.id})}"
+            partner_name = instance.who_is_partner.partner_name if instance.who_is_partner else "Не указан"
+
+            # Преобразование номера телефона
+            phone_number = phonenumbers.parse(instance.client_phone_number, "RU")
+            formatted_phone_number = phonenumbers.format_number(phone_number, phonenumbers.PhoneNumberFormat.E164)
+
+            message = f"Новый клиент. Возьмите в работу.\n\nИмя: {instance.client_name}\nАдрес: {instance.address}\nТелефон: {formatted_phone_number}\nКто риелтор: {partner_name} "
+            inline_keyboard = [
+                [
+                    {
+                        "text": "Открыть карточку клиента",
+                        "url": client_edit_url
+                    }
+                ]
+            ]
+            payload = {
+                'chat_id': chat_id,
+                'text': message,
+                'parse_mode': 'Markdown',
+                'reply_markup': {
+                    'inline_keyboard': inline_keyboard
+                }
+            }
+            url = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
+            response = requests.post(url, json=payload)
             print(response.json())

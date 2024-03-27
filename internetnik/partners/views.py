@@ -104,9 +104,8 @@ def add_client(request):
     
 @login_required
 def add_client_operator(request):
+    partners = Partners.objects.all().order_by('partner_name')
     searchform = SearchForm()
-    partners = Partners.objects.all()
-    partners_json = serialize('json', partners)
     if request.method == 'POST':
         form = AddClientFormOperator(request.POST)
         if form.is_valid():
@@ -126,9 +125,8 @@ def add_client_operator(request):
     data = {
         'title': 'Создание нового клиента',
         'form': form,
-        'searchform': searchform,
-        'partners_json': partners_json,
-        'partners': partners
+        'partners': partners,
+        'searchform': searchform
     }
 
     return render(request, 'partners/add_client_operator.html', data)

@@ -7,9 +7,9 @@ from partners.models import Clients, CommentClient, CommentContract, Contracts, 
 
 class SearchForm(forms.Form):
     SEARCH_FIELDS = (
-        ('contract_number', 'Поиск по договору'),
         ('phone_number', 'Поиск по телефону'),
         ('address', 'Поиск по адресу'),
+        ('contract_number', 'Поиск по договору'),
     )
     search_field = forms.ChoiceField(choices=SEARCH_FIELDS, label='Параметры поиска',
                                      widget=forms.Select(attrs={'class': 'form-select'}))
@@ -25,7 +25,7 @@ class AddClientForm(forms.ModelForm):
 
 
 class AddClientFormOperator(forms.ModelForm):
-    comment = forms.CharField(widget=forms.Textarea(attrs={'cols': 30, 'rows': 3}), label='Комментарий')
+    comment = forms.CharField(required=False, widget=forms.Textarea(attrs={'cols': 30, 'rows': 3}), label='Комментарий')
 
     # who_is_partner = forms.ModelChoiceField(queryset=Partners.objects.all().order_by('partner_name'),
     #                                         label='Источник заявки')

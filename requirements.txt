@@ -6,3 +6,4 @@ typing_extensions==4.9.0
 
 environs~=11.0.0
 requests~=2.31.0
+phonenumbers~=8.13.32

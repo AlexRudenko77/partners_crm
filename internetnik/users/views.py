@@ -2,7 +2,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
-
+from django.views.decorators.cache import cache_control
 from .forms import LoginUserForm
 
 
@@ -20,6 +20,8 @@ def login_user(request):
     return render(request, 'users/login.html', {'form': form})
 
 
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def logout_user(request):
+    request.session.flush()  # Очищает сессию
     logout(request)
     return HttpResponseRedirect(reverse('users:login'))

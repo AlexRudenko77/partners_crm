@@ -53,14 +53,18 @@ body {
   }
 
 @media (max-width:   1080px) {
-  .container, .my-form {
+  .container {
     width:   100%; /* Полная ширина на мобильных устройствах */
     margin-left:   0;
   }
 }
 
 @media (max-width:  576px) {
-    .fs-3-mobile {
-      font-size:  1.75rem; /* Увеличение размера текста на мобильных устройствах, чтобы не было масштабирования
+    .fs-3-mobile .select2-search--dropdown .select2-search__field {
+      font-size:  1.3 rem;
     }
   }
+
+
+
+
