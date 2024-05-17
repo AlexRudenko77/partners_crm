@@ -16,7 +16,7 @@ def create_contract(sender, instance, created, **kwargs):
     if instance.call_result == 'AG' and instance.is_contract_created == False:
 
         contract = Contracts.objects.create()
-        for field_name in ['client_phone_number', 'client_name', 'address', 'who_is_partner',
+        for field_name in ['client_phone_number', 'second_phone_number', 'client_name', 'address', 'who_is_partner',
                            'who_is_operator']:
             setattr(contract, field_name, getattr(instance, field_name))
         contract.who_is_client = instance
@@ -68,10 +68,12 @@ def notify_operator_new_client_added(sender, instance, created, **kwargs):
             partner_name = instance.who_is_partner.partner_name if instance.who_is_partner else "Не указан"
 
             # Преобразование номера телефона
-            phone_number = phonenumbers.parse(instance.client_phone_number, "RU")
-            formatted_phone_number = phonenumbers.format_number(phone_number, phonenumbers.PhoneNumberFormat.E164)
+            # phone_number = phonenumbers.parse(instance.client_phone_number, "RU")
+            # formatted_phone_number = phonenumbers.format_number(phone_number, phonenumbers.PhoneNumberFormat.E164)
 
-            message = f"Новый клиент. Возьмите в работу.\n\nИмя: {instance.client_name}\nАдрес: {instance.address}\nТелефон: {formatted_phone_number}\nКто риелтор: {partner_name} "
+            # message = f"Новый клиент. Возьмите в работу.\n\nИмя: {instance.client_name}\nАдрес: {instance.address}\nТелефон: {formatted_phone_number}\nИсточник: {partner_name} "
+            message = f"Новый клиент.\n\nИмя: {instance.client_name}\nАдрес: {instance.address}\nИсточник: {partner_name} "
+
             inline_keyboard = [
                 [
                     {

@@ -18,10 +18,12 @@ urlpatterns = [
     path('all_contracts/', views.all_contracts, name='all_contracts'),
     path('all_clients/', views.all_clients, name='all_clients'),
     path('search_results/', views.search, name='search'),
+    path('show_contract/<int:contract_id>/', views.show_contract_check_user_type, name='show_contract'),
+    path('contracts/<int:contract_id>/edit/', views.edit_contract, name='edit_contract'),
+
 
     # path('create_contract/<int:client_id>/', views.create_contract, name='create_contract'),
-    # path('show_contract/<int:contract_id>/', views.show_contract_check_user_type, name='show_contract'),
-    # path('contracts/<int:contract_id>/edit/', views.edit_contract, name='edit_contract'),
+    #
     # path('contracts_to_coordinate/', views.contracts_to_coordinate, name='contracts_to_coordinate'),
 
 ]

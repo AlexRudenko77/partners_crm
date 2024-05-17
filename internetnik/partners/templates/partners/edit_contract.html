@@ -2,21 +2,12 @@
 {% load static %}
 
 {% block title %}
-{{ title }} №{{ client.id }}
+{{ title }}
 {% endblock %}
 
 {% block content %}
 
-<div class="container" style="margin-top: 1rem">
-   <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="/">Главная</a></li>
-          <li class="breadcrumb-item"><a href="{% url 'show_client' client.id %}">Клиент №{{ client.id }}</a></li>
-          <li class="breadcrumb-item active" aria-current="page">Редактирование клиента №{{ client.id }}</li>
-        </ol>
-     </nav>
-</div>
-
+                    ''
 
  <div class="container" style="margin-top: 1rem">
 <div class="col-12 col-md-8">
@@ -25,11 +16,16 @@
      {% csrf_token %}
    <table class="table">
         <tr>
-            <td>{{ form.client_name.label_tag }}</td>
+            <td>ФИО клиента</td>
             <td>{{ form.client_name }}</td>
         </tr>
+       <tr>
+            <td>Данные для заявки (д.р., паспорт, старый адрес и др.)</td>
+            <td>{{ form.client_info }}</td>
+        </tr>
+
         <tr>
-            <td>{{ form.client_phone_number.label_tag }}</td>
+            <td>Номер телефона</td>
             <td>{{ form.client_phone_number }}</td>
         </tr>
        <tr>
@@ -37,17 +33,38 @@
             <td>{{ form.second_phone_number }}</td>
         </tr>
         <tr>
-            <td>{{ form.address.label_tag }}</td>
+            <td>Адрес</td>
             <td>{{ form.address }}</td>
         </tr>
         <tr>
-            <td>{{ form.call_result.label_tag }}</td>
-            <td>{{ form.call_result }}</td>
+            <td>Статус заявки</td>
+            <td>{{ form.contract_status }}</td>
+        </tr>
+       <tr>
+            <td>{{form.provider.label_tag}} </td>
+            <td>{{ form.provider }}</td>
+        </tr>
+       <tr>
+            <td>{{form.contract_number.label_tag}} </td>
+            <td>{{ form.contract_number }}</td>
+        </tr>
+       <tr>
+            <td>Набор услуг (или название тарифа)</td>
+            <td>{{ form.tariff }}</td>
+        </tr>
+       <tr>
+            <td>Абонентская плата</td>
+            <td>{{ form.arpu }}</td>
         </tr>
         <tr>
-            <td>Когда перезвонить </td>
-            <td>{{ form.callback_date }}</td>
+            <td>Покупка оборудования</td>
+            <td>{{ form.equipment }}</td>
         </tr>
+       <tr>
+            <td>Дата подключения</td>
+            <td>{{ form.connection_date }}</td>
+        </tr>
+
     </table>
     <button type="submit" class="btn btn-primary">Сохранить изменения</button>
 </form>
@@ -72,6 +89,7 @@
       </div>
     </div>
   </div>
+
 
 
 {% endblock %}

@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils import timezone
 
 
 # Create your models here.
@@ -41,6 +42,8 @@ class ContractStatus(models.TextChoices):
     VERIFY = 'VRF', 'Подключен - проверка оплаты'
     FINISHED = 'FIN', 'Подключен - абон.плата внесена'
     FAILED = 'FAIL', 'Отказ'
+    NA_FAILED = 'NAF', 'Отказ по недозвону'
+
 
 
 class Providers(models.TextChoices):
@@ -62,19 +65,20 @@ class CallResultChoices(models.TextChoices):
     IN_PROCESS = 'PR', 'Думает'
     NO_ANSWER = 'NA', 'Недозвон'
     NEW = 'NEW', 'Новый клиент'
+    NA_FAILED = 'NAF', 'Отказ по недозвону'
 
 
 class Clients(models.Model):
     objects = models.Manager()
-
     time_create = models.DateTimeField(auto_now_add=True, verbose_name='Дата поступления')  # дата поступления клиента
     time_update = models.DateTimeField(auto_now=True)  # дата обновления
     client_phone_number = models.CharField(max_length=12, blank=False, verbose_name='Номер телефона клиента')
+    second_phone_number = models.CharField(max_length=12, blank=True, null=True, verbose_name='Доп. номер телефона')
     client_name = models.CharField(max_length=50, blank=True, verbose_name='ФИО клиента')
     address = models.CharField(max_length=255, blank=True, verbose_name='Адрес клиента')
     call_result = models.CharField(max_length=3, choices=CallResultChoices.choices,
                                    verbose_name='Результат звонка', default='NEW')
-    callback_date = models.DateField(null=True, blank=True, verbose_name='Дата повторного звонка')
+    callback_date = models.DateTimeField(default=timezone.now, null=True, blank=True, verbose_name='Дата повторного звонка')
     is_contract_created = models.BooleanField(default=False, verbose_name='Заключен договор д/н')
     who_is_partner = models.ForeignKey('Partners', on_delete=models.CASCADE, verbose_name='Источник заявки',
                                        null=True, blank=True)
@@ -93,8 +97,9 @@ class Contracts(models.Model):
     time_update = models.DateTimeField(auto_now=True, verbose_name='Дата обновления')
     who_is_client = models.ForeignKey(Clients, on_delete=models.CASCADE, verbose_name='ID клиента', null=True)
     client_phone_number = models.CharField(max_length=12, blank=False, verbose_name='Номер телефона клиента')
+    second_phone_number = models.CharField(max_length=12, blank=True, null=True, verbose_name='Доп. номер телефона')
     client_name = models.CharField(max_length=80, blank=True, verbose_name='ФИО клиента')
-    client_info = models.TextField(blank=True, verbose_name='Данные для заявки (дата рождения, паспорт...')
+    client_info = models.TextField(blank=True, verbose_name='Данные для заявки (дата рождения, паспорт...)')
     address = models.CharField(max_length=255, blank=True, verbose_name='Адрес клиента')
 
     who_is_partner = models.ForeignKey('Partners', on_delete=models.CASCADE, verbose_name='Источник заявки', null=True,
